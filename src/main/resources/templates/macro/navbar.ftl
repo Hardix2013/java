@@ -8,7 +8,7 @@
             </#if>
             <li><a href="/shop">Магазин</a></li>
         </ul></div>
-    <div class="col-sm-4 col-sm-offset-2">
+    <div class="col-sm-5 col-sm-offset-1">
         <#if auth??>
         <ul class="nav navbar-nav">
             <li><a href="/bucket">Баланс: <span class="badge">${auth.balance!"0"}</span></a></li>

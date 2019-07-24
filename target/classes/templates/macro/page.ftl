@@ -5,7 +5,6 @@
 <head>
     <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.4.1/css/bootstrap.min.css" />
-
     <title>${title}</title>
 </head>
 <body>
