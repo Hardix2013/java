@@ -4,7 +4,6 @@ package ru.mylife54.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -54,6 +53,7 @@ public class UserController {
         return "users";
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','CREATOR')")
     @GetMapping("/{id}")
     public String showUser(@AuthenticationPrincipal User auth, @PathVariable("id") User user, ModelMap modelMap) {
         modelMap.addAttribute("allRoles", roleService.getRoles());
@@ -71,6 +71,7 @@ public class UserController {
         return "editUser";
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','CREATOR')")
     @PostMapping("/edit/{id}")
     public String editUser(@PathVariable("id") User target, @AuthenticationPrincipal User auth, @ModelAttribute User sourse, @RequestParam("imageProfile") MultipartFile imageProfile, ModelMap modelMap) {
         String tPassword = target.getPassword();
@@ -93,7 +94,6 @@ public class UserController {
         }
         modelMap.addAttribute("users", target);
         modelMap.addAttribute("auth", auth);
-        auth.setBalance(target.getBalance());
         modelMap.addAttribute("roles", roleService.getRoles());
         try {
             service.saveUser(target);
@@ -124,6 +124,7 @@ public class UserController {
     @PostMapping("/registration")
     public String registration(@AuthenticationPrincipal User auth, @ModelAttribute User user, ModelMap modelMap) {
         Set<Role> roles = new HashSet<>();
+        String passwordForAutologin = user.getPassword();
         roles.add(roleService.getRole("USER"));
         user.setAuthorities(roles);
         modelMap.addAttribute("users", user);
@@ -156,6 +157,17 @@ public class UserController {
             return "redirect:/users/"+user.getId();
         }
     }
-
-
 }
+//    @Autowired
+//    AuthenticationManager authenticationManager;
+//
+//
+//    public void autologin(String login, String password){
+//        UserDetails user = loadUserByUsername(login);
+//        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
+//        authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+//        if(usernamePasswordAuthenticationToken.isAuthenticated()){
+//            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+//            System.out.println("АВТОРИЗОВАН!");
+//        }
+//    }
